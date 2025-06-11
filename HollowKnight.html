@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hollow Knight - El Mundo de Hallownest</title>
+    <style>
+        /* Estilos generales para el cuerpo de la página */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212; /* Fondo casi negro para una atmósfera oscura */
+            color: #e0e0e0; /* Texto claro general */
+            line-height: 1.6;
+            position: relative; /* Necesario para el z-index del reproductor fijo */
+        }
+
+        /* Estilos para el encabezado principal de la página */
+        header {
+            background-color: #222;
+            color: #ffd700; /* Color oro para el título principal */
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 3px solid #444;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+
+        header p {
+            margin-top: 5px;
+            font-size: 1.1em;
+            color: #ccc;
+        }
+
+        /* Estilos para la barra de navegación */
+        nav {
+            background-color: #444;
+            padding: 0.5rem 0;
+            text-align: center;
+            border-bottom: 2px solid #555;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex; /* Para poner los elementos del menú en línea */
+            justify-content: center; /* Para centrarlos */
+            flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 15px; /* Más padding para los enlaces del menú */
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color: #ffd700; /* Fondo dorado al pasar el ratón */
+            color: #222; /* Texto oscuro al pasar el ratón */
+        }
+
+        /* Estilos para las secciones de contenido */
+        .section {
+            padding: 40px 20px;
+            margin: 20px auto;
+            background-color: #1a1a1a; /* Contenedor más claro que el fondo del body */
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5); /* Sombra más pronunciada */
+            max-width: 1000px; /* Ancho máximo para el contenido, un poco más que antes */
+            line-height: 1.7; /* Mayor espacio entre líneas */
+            color: #e0e0e0; /* Texto claro para las secciones */
+        }
+
+        .section h2 {
+            color: #ffd700; /* Color oro para los títulos de sección */
+            border-bottom: 2px solid #444; /* Borde inferior más oscuro */
+            padding-bottom: 15px; /* Más espacio bajo el borde */
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.2em;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        
+        .section h3 {
+            color: #007bff; /* Color azul para subtítulos */
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .section p {
+            margin-bottom: 15px;
+        }
+
+        .section ul {
+            list-style-type: disc;
+            margin-left: 25px;
+            margin-bottom: 20px;
+        }
+
+        .section ul li {
+            margin-bottom: 8px;
+        }
+
+        /* Estilos para todas las tablas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0; /* Más margen arriba y abajo */
+            font-size: 0.95em; /* Ligeramente más grande */
+            min-width: 400px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.4); /* Sombra más fuerte para la tabla */
+            background-color: #222; /* Fondo de tabla más oscuro */
+        }
+        table thead tr {
+            background-color: #383838; /* Encabezado de tabla */
+            color: #ffffff;
+            text-align: left;
+        }
+        table th,
+        table td {
+            padding: 14px 18px; /* Más padding para celdas */
+            border: 1px solid #555; /* Bordes suaves */
+            vertical-align: top; /* Alinear el texto al principio de la celda */
+        }
+        table tbody tr {
+            border-bottom: 1px solid #555;
+        }
+        table tbody tr:nth-of-type(even) {
+            background-color: #2b2b2b; /* Filas pares con un fondo ligeramente diferente */
+        }
+        table tbody tr:last-of-type {
+            border-bottom: 2px solid #383838;
+        }
+        table tbody tr:hover {
+            background-color: #404040; /* Resaltado al pasar el ratón */
+            color: #ffd700; /* Texto dorado al pasar el ratón */
+        }
+        table strong {
+            color: #ffd700; /* Nombres de jefe en dorado */
+        }
+        table img {
+            max-width: 60px; /* Tamaño máximo para las imágenes en tablas */
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Estilos para el reproductor de música flotante */
+        .music-player-container {
+            position: fixed; /* Lo saca del flujo normal y lo fija a la ventana */
+            bottom: 20px; /* Lo coloca a 20px del borde inferior */
+            left: 20px; /* Lo coloca a 20px del borde izquierdo */
+            z-index: 1000; /* Asegura que esté por encima de otros elementos */
+            background-color: rgba(34, 34, 34, 0.8); /* Fondo oscuro con algo de transparencia */
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            width: 300px; /* Ancho reducido */
+            height: 80px; /* Altura aproximada para controles compactos */
+            overflow: hidden; /* Oculta elementos que sobresalgan si la altura es fija */
+            text-align: left; /* Alinea el texto dentro del contenedor */
+        }
+
+        .music-player-container iframe {
+            width: 100%;
+            height: 100%; /* El iframe ocupa todo el contenedor fijo */
+            border: 0; /* Elimina el borde del iframe */
+        }
+
+        .music-player-container p {
+            display: none; /* Oculta el texto informativo */
+        }
+
+        /* Estilos para el pie de página */
+        footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 50px;
+            background-color: #222;
+            color: #888;
+            border-top: 3px solid #444;
+            font-size: 0.9em;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column; /* Apila los elementos del menú en pantallas pequeñas */
+            }
+            nav ul li {
+                margin: 5px 0; /* Más espacio vertical entre enlaces */
+            }
+            .section {
+                padding: 20px 15px;
+                margin: 15px auto;
+            }
+            table th,
+            table td {
+                padding: 8px 10px; /* Menor padding en celdas de tabla */
+                font-size: 0.85em;
+            }
+            table img {
+                max-width: 40px; /* Imágenes más pequeñas en tablas */
+            }
+            .music-player-container {
+                width: 250px; /* Ancho aún más pequeño en móviles */
+                height: 70px; /* Altura ajustada */
+                bottom: 10px;
+                left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Hollow Knight: Un Viaje por Hallownest</h1>
+        <p>Tu guía completa para dominar el reino de Hollownest</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#introduccion">Introducción</a></li>
+            <li><a href="#musica">Música</a></li> <!-- Enlace a la nueva sección de música -->
+            <li><a href="#rutas">Rutas</a></li>
+            <li><a href="#mejoras">Mejoras</a></li>
+            <li><a href="#consejos">Consejos</a></li>
+            <li><a href="#jefes">Jefes y Debilidades</a></li>
+            <li><a href="#onirico">Modo Onírico</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="introduccion" class="section">
+            <h2>Bienvenido a Hallownest</h2>
+            <p>Hollow Knight es un videojuego de aventura y acción de estilo Metroidvania, desarrollado y publicado por Team Cherry. En este juego, encarnas a "El Caballero", un silencioso protagonista que debe detener una misteriosa plaga conocida como "La Infección" que ha asolado el reino de Hallownest. Explora vastos y conectados escenarios, descubre secretos, lucha contra temibles enemigos y desafiantes jefes, y desentraña la oscura historia de este mundo.</p>
+            <p>Prepárate para una aventura épica llena de misterio, exploración y combates desafiantes. ¡Este sitio te ayudará a navegar por sus profundidades!</p>
+            <center><img src="https://th.bing.com/th/id/R.31321b9afb2e9be83c9340b2b5509161?rik=21h0GQ1V17WWDg&pid=ImgRaw&r=0" alt="Imagen de Hollow Knight" width="1000" height="500"></center>
+        </section>
+
+        <section id="musica" class="section" style="padding: 10px; margin: 0; background: none; box-shadow: none; max-width: none;">
+            <!-- La sección principal de música se ha modificado para contener solo el reproductor flotante -->
+            <div class="music-player-container">
+                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/videoseries?list=PLe1jcCJWvkWiWLp9h3ge0e5v7n6kxEfOG&autoplay=1&loop=1&playlist=PLe1jcCJWvkWiWLp9h3ge0e5v7n6kxEfOG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <!-- El párrafo informativo se ha ocultado con CSS ya que el reproductor es flotante -->
+                <p style="margin-top: 15px; font-size: 0.9em; color: #ccc; display: none;">
+                    ¡Disfruta de la banda sonora mientras exploras los secretos de Hallownest! (Si la música no se reproduce automáticamente, por favor, haz clic en el botón de "Reproducir" del reproductor).
+                </p>
+            </div>
+        </section>
+
+        <section id="rutas" class="section">
+            <h2>Rutas de Exploración</h2>
+            <p>Hallownest es un reino laberíntico. Aquí te mostraremos algunas rutas recomendadas para tus primeras exploraciones y cómo acceder a las diferentes áreas.</p>
+            <ul>
+                <li>**Inicio y Cruce Olvidado:** Tus primeros pasos y la importancia de esta zona central.</li>
+                <li>**Sendero Verde y Páramos Fúngicos:** Cómo avanzar y las habilidades que obtendrás.</li>
+                <li>**Ciudad de Lágrimas y Cuenca Antigua:** Descubre la majestuosidad y los secretos ocultos.</li>
+                <li>**Cañones Nublados y Nido Profundo:** Prepárate para zonas más peligrosas y claustrofóbicas.</li>
+            </ul>
+        </section>
+
+        <section id="mejoras" class="section">
+            <h2>Mejoras y Habilidades</h2>
+            <p>A lo largo de tu aventura, obtendrás diferentes mejoras que te ayudarán a superar obstáculos y a hacerte más fuerte. Aquí te detallamos las principales:</p>
+
+            <h3>Amuletos</h3>
+            <p>Los amuletos son objetos especiales que otorgan habilidades pasivas. Puedes equipar varios, pero cada uno consume una cantidad de "muescas" (espacios). ¡Experimenta con diferentes combinaciones!</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre del Amuleto</th>
+                        <th>Muescas</th>
+                        <th>Efecto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <img src="https://th.bing.com/th/id/OIP.O6TcTx3iEjmN73-KdreXUAAAAA?rs=1&pid=ImgDetMain" alt="Amuleto Corazón Frágil">
+                        </td>
+                        <td><strong>Corazón Frágil / Robusto</strong></td>
+                        <td>2 / 5</td>
+                        <td>Aumenta tu salud máxima.</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://th.bing.com/th/id/OIP.Q5jV_sOytfxVpclei694hwAAAA?rs=1&pid=ImgDetMain" alt="Amuleto Fuerza Frágil">
+                        </td>
+                        <td><strong>Fuerza Frágil / Robusta</strong></td>
+                        <td>3 / 5</td>
+                        <td>Aumenta el daño de tu aguijón.</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            <img src="https://th.bing.com/th/id/OIP.Wk7GRbMVZ65YSxWSOiGawwAAAA?rs=1&pid=ImgDetMain" alt="Amuleto Maestro del Sprint">
+                        </td>
+                        <td><strong>Maestro del Sprint</strong></td>
+                        <td>1</td>
+                        <td>Aumenta tu velocidad de movimiento.</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+
+            <h3 style="margin-top: 40px;">Habilidades de Movimiento y Combate</h3>
+            <p>Estas habilidades son fundamentales para la exploración y el combate. Se obtienen a medida que avanzas en el juego.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre de Habilidad</th>
+                        <th>Ubicación / Cómo se Obtiene</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <img src="https://i.blogs.es/dbc676/1366_2000-11-/1024_2000.jpeg" alt="Habilidad Salto de Muro">
+                        </td>
+                        <td><strong>Salto de Muro</strong></td>
+                        <td>Entrañas del Nido / Derrotando a Marmu</td>
+                        <td>Te permite escalar paredes saltando de una a otra.</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://i0.wp.com/raiderking.com/wp-content/uploads/2023/06/Hollow-Knight-How-to-Get-Double-Jump-Monarch-Wings.jpg?resize=768%2C432&ssl=1" alt="Habilidad Alas de Monarca">
+                        </td>
+                        <td><strong>Alas de Monarca</strong></td>
+                        <td>Cuenca Antigua / Derrotando a los Hermanos Mantis</td>
+                        <td>Te otorga la habilidad de realizar un doble salto.</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            <img src="https://evelongames.com/wp-content/uploads/2022/05/Alma-sombria-2.webp" alt="Habilidad Grito Desolador">
+                        </td>
+                        <td><strong>Grito Desolador / Chillido Abisal</strong></td>
+                        <td>Restos de la Encrucijada / Derrotando al Maestro del Alma</td>
+                        <td>Un poderoso hechizo ascendente que invoca un grito de alma.</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://th.bing.com/th/id/OIP.L2xWoIiZMEUhBinGof6ETwHaCS?rs=1&pid=ImgDetMain" alt="Habilidad Tiro Vengativo">
+                        </td>
+                        <td><strong>Tiro Vengativo / Espectro Sombrío</strong></td>
+                        <td>Santuario del Alma / Derrotando al Maestro del Alma</td>
+                        <td>Un proyectil de alma que puedes disparar hacia adelante.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="consejos" class="section">
+            <h2>Consejos para Sobrevivir en Hallownest</h2>
+            <p>El camino del Caballero es arduo. Sigue estos consejos para facilitar tu viaje:</p>
+            <ul>
+                <li>**Explora a fondo:** No tengas miedo de desviarte del camino principal. Hallownest está lleno de secretos.</li>
+                <li>**Gestiona tu alma:** El alma es vital para curarte y usar hechizos. Golpea a los enemigos para recargarla.</li>
+                <li>**Aprende los patrones:** Los jefes y muchos enemigos tienen patrones de ataque predecibles. Estúdialos.</li>
+                <li>**No te desanimes:** Morir es parte del aprendizaje. Recupera tu sombra para recuperar tus Geo.</li>
+                <li>**Visita a Sly:** El comerciante de Dirtmouth tiene objetos muy útiles.</li>
+                <li>**Encuentra a Confesor Jiji:** Para recuperar tu sombra si te cuesta volver al lugar de tu muerte.</li>
+            </ul>
+        </section>
+
+        <section id="jefes" class="section">
+            <h2>Jefes de Hallownest: Un Vistazo a sus Historias</h2>
+            <p>
+                El reino de Hallownest está plagado de adversarios formidables, cada uno con su propia historia y lugar en la decadencia del reino. Enfrentarse a ellos es una parte crucial de tu viaje para detener la Infección. Aquí te presentamos una tabla con algunos de los jefes más importantes y conocidos que encontrarás. ¡Prepárate para el desafío!
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Jefe</th>
+                        <th>Ubicación Principal</th>
+                        <th>Descripción y Lore Destacado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Hornet</strong></td>
+                        <td>Greenpath / Cuenca Antigua</td>
+                        <td>Hija de la Dama Blanca y el Rey Pálido. Es la protectora del sello del Templo del Huevo Negro. Figura ágil y misteriosa que pone a prueba al Caballero.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>El Caballero Hueco (The Hollow Knight)</strong></td>
+                        <td>Templo del Huevo Negro</td>
+                        <td>El Vessel original elegido por el Rey Pálido para contener la Infección. Se suponía que sería 'puro', pero desarrolló un apego a su padre, corrompiéndose por la Radiance. Jefe final principal.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>La Radiance (El Destello)</strong></td>
+                        <td>Mundo de Sueños (final verdadero)</td>
+                        <td>Deidad primordial, una polilla ancestral olvidada y la verdadera causa de la Infección que asola Hallownest. Jefe final para obtener el final verdadero.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Falso Caballero (False Knight)</strong></td>
+                        <td>Cruces Olvidados</td>
+                        <td>Pequeño Mawlek Gruz controlando la armadura de un caballero caído. Representa la desesperación y pérdida de identidad causada por la Infección. Uno de los primeros jefes.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Maestro del Alma (Soul Master)</strong></td>
+                        <td>Ciudad de Lágrimas</td>
+                        <td>Hechicero ambicioso que buscaba usar el Alma para curar la Infección y la inmortalidad, pero se corrompió. Su versión onírica es el Tirano del Alma.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Guardianes Vigilantes (Watcher Knights)</strong></td>
+                        <td>Ciudad de Lágrimas</td>
+                        <td>Seis caballeros que protegían la Torre del Vigilante, donde dormía Lurien el Vigilante. Son los últimos guardianes leales de un reino en decadencia.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Defensor del Estiércol (Dung Defender)</strong></td>
+                        <td>Desagüe Real</td>
+                        <td>Valiente y honorable caballero, uno de los Cinco Grandes Caballeros de Hallownest. Su versión onírica, el Defensor Blanco, revela su triste lealtad al Rey Pálido.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Señoras Mantis (Mantis Lords)</strong></td>
+                        <td>Aldea Mantis</td>
+                        <td>Las tres líderes orgullosas de la Tribu Mantis. Un ejemplo de sociedad que resistió la Infección, manteniendo sus tradiciones y honor.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Receptáculo Roto (Broken Vessel)</strong></td>
+                        <td>Cuenca Antigua</td>
+                        <td>Otro Vessel fallido, corrompido por la Infección. Representa el fracaso del plan del Rey Pálido y la imparable propagación de la Infección. Su versión onírica es el Vástago Perdido.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nosk</strong></td>
+                        <td>Nido Profundo</td>
+                        <td>Criatura que adopta la forma de sus víctimas. El Nosk que se enfrenta el Caballero asume la forma de un Vessel caído, simbolizando cómo la oscuridad distorsiona recuerdos.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gran Maestro de Aguijones Sly (Great Nailsage Sly)</strong></td>
+                        <td>Panteones (DLC Godmaster)</td>
+                        <td>El antiguo maestro de aguijones de Hallownest y dueño de la tienda en Dirtmouth. Importante en el lore como maestro de combate.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Príncipe Gris Zote (Grey Prince Zote)</strong></td>
+                        <td>Boca Sucia (vía Sueño)</td>
+                        <td>Jefe opcional que aparece si salvas a Zote. Es una versión 'idealizada' y exagerada de Zote que existe en la mente de Bretta, demostrando cómo la percepción altera la realidad.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Grimm (Troupe Master Grimm)</strong></td>
+                        <td>Boca Sucia / Circense de Grimm (DLC Grimm Troupe)</td>
+                        <td>Líder de la Compañía de Grimm, con un ritual oscuro para recolectar llamas. Su forma más poderosa, el Rey Pesadilla Grimm, es uno de los desafíos más difíciles.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="onirico" class="section">
+            <h2>El Reino Onírico</h2>
+            <p>Con el Aguijón Onírico, puedes adentrarte en el reino de los sueños, enfrentarte a versiones más difíciles de jefes (Jefes Espectrales), y recolectar Esencias. La Esencia es crucial para el progreso en esta parte del juego.</p>
+            <ul>
+                <li>**Obtención de Esencia:** Derrotando Jefes Espectrales, encontrando Árboles Susurrantes y recolectando Fragmentos de Esencia de enemigos específicos.</li>
+                <li>**Jefes Espectrales:** Versiones más poderosas de jefes ya conocidos, como el Falso Caballero Sueño o el Rey Vengado.</li>
+                <li>**Puertas de los Sueños:** Lugares especiales que solo se abren con Esencia, llevando a zonas secretas o atajos.</li>
+                <li>**Desafíos del Coliseo de los Locos:** Aunque no son estrictamente oníricos, el Coliseo también te pide dominar el combate.</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Guía de Hollow Knight. Creado para fans por fans.</p>
+        <p>Hollow Knight es una marca registrada de Team Cherry.</p>
+    </footer>
+
+</body>
+</html>
